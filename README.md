@@ -7,7 +7,7 @@
 [![Contributors](https://img.shields.io/github/contributors/mateussmohamed/veek?color=EDF2F7&style=flat-square)](https://github.com/mateussmohamed/veek/graphs/contributors)
 
 <p align="center">
-   <a href="https://titter.vercel.app">Go check it out 🎉</a>
+   <a href="https://tittter.vercel.app">Go check it out 🎉</a>
 </p>
 
 ---
