@@ -1,10 +1,10 @@
 <h1 align='center'>Titter</h1>
 
 [![Author](https://img.shields.io/badge/author-mateussmohamed-EDF2F7?style=flat-square)](https://github.com/mateussmohamed)
-[![Languages](https://img.shields.io/github/languages/count/mateussmohamed/veek?color=%23EDF2F7&style=flat-square)](#)
-[![Stars](https://img.shields.io/github/stars/mateussmohamed/veek?color=EDF2F7&style=flat-square)](https://github.com/mateussmohamed/veek/stargazers)
-[![Forks](https://img.shields.io/github/forks/mateussmohamed/veek?color=%23EDF2F7&style=flat-square)](https://github.com/mateussmohamed/veek/network/members)
-[![Contributors](https://img.shields.io/github/contributors/mateussmohamed/veek?color=EDF2F7&style=flat-square)](https://github.com/mateussmohamed/veek/graphs/contributors)
+[![Languages](https://img.shields.io/github/languages/count/mateussmohamed/titter?color=%23EDF2F7&style=flat-square)](#)
+[![Stars](https://img.shields.io/github/stars/mateussmohamed/titter?color=EDF2F7&style=flat-square)](https://github.com/mateussmohamed/titter/stargazers)
+[![Forks](https://img.shields.io/github/forks/mateussmohamed/titter?color=%23EDF2F7&style=flat-square)](https://github.com/mateussmohamed/titter/network/members)
+[![Contributors](https://img.shields.io/github/contributors/mateussmohamed/titter?color=EDF2F7&style=flat-square)](https://github.com/mateussmohamed/titter/graphs/contributors)
 
 <p align="center">
    <a href="https://tittter.vercel.app">Go check it out 🎉</a>
