@@ -1,5 +1,4 @@
 import { memo, useContext, useState } from 'react'
-import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { Avatar, Button, Stack, Text, useToast } from '@chakra-ui/react'
 import * as Unicons from '@iconscout/react-unicons'

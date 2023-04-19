@@ -326,7 +326,9 @@ describe('titter ~ service', () => {
       const mockUserToFollowing = UserBuilder()
       const mockLoggedUser = UserBuilder()
 
-      const ramdomUserId = Array(5)
+      localStorage.setItem('current_user', JSON.stringify(mockLoggedUser))
+
+      const ramdomUserId = Array(2)
         .fill(null)
         .map(() => UserBuilder().id)
 
@@ -342,39 +344,46 @@ describe('titter ~ service', () => {
         [mockLoggedUser.id]: [...ramdomUserId, mockUserToFollowing.id]
       }
 
-      localStorage.setItem('current_user', JSON.stringify(mockLoggedUser))
       localStorage.setItem('user_followers', JSON.stringify(userFollowersData))
+      localStorage.setItem('user_following', JSON.stringify(resultUserFollowing))
 
       const response = await titter.follow(mockUserToFollowing.id)
 
-      expect(localStorage.setItem).toHaveBeenNthCalledWith(3, 'user_followers', JSON.stringify(resultUserFollowers))
-      expect(localStorage.setItem).toHaveBeenNthCalledWith(4, 'user_following', JSON.stringify(resultUserFollowing))
+      expect(localStorage.setItem).toHaveBeenNthCalledWith(4, 'user_followers', JSON.stringify(resultUserFollowers))
+      expect(localStorage.setItem).toHaveBeenNthCalledWith(5, 'user_following', JSON.stringify(resultUserFollowing))
       expect(response).toBe('follow')
     })
 
-    // test('should be unfollow', async () => {
-    //   const mockUserToFollowing = UserBuilder()
-    //   const mockLoggedUser = UserBuilder()
+    test('should be unfollow', async () => {
+      const mockUserToFollowing = UserBuilder()
+      const mockLoggedUser = UserBuilder()
 
-    //   const ramdomUserId = Array(5)
-    //     .fill(null)
-    //     .map(() => UserBuilder().id)
+      localStorage.setItem('current_user', JSON.stringify(mockLoggedUser))
 
-    //   const userFollowingData = {
-    //     [mockUserToFollowing.id]: [mockLoggedUser.id, ...ramdomUserId]
-    //   }
+      const ramdomUserId = Array(2)
+        .fill(null)
+        .map(() => UserBuilder().id)
 
-    //   const resultUserFollowing = {
-    //     [mockUserToFollowing.id]: [...ramdomUserId]
-    //   }
+      const userFollowersData = {
+        [mockUserToFollowing.id]: [...ramdomUserId, mockLoggedUser.id]
+      }
 
-    //   localStorage.setItem('current_user', JSON.stringify(mockLoggedUser))
-    //   localStorage.setItem('user_following', JSON.stringify(userFollowingData))
+      const resultUserFollowers = {
+        [mockUserToFollowing.id]: [...ramdomUserId]
+      }
 
-    //   const response = await titter.follow(mockUserToFollowing.id)
+      const resultUserFollowing = {
+        [mockLoggedUser.id]: [...ramdomUserId]
+      }
 
-    //   expect(localStorage.setItem).toHaveBeenCalledWith('user_following', JSON.stringify(resultUserFollowing))
-    //   expect(response).toBe('unfollow')
-    // })
+      localStorage.setItem('user_followers', JSON.stringify(userFollowersData))
+      localStorage.setItem('user_following', JSON.stringify(resultUserFollowing))
+
+      const response = await titter.follow(mockUserToFollowing.id)
+
+      expect(localStorage.setItem).toHaveBeenNthCalledWith(4, 'user_followers', JSON.stringify(resultUserFollowers))
+      expect(localStorage.setItem).toHaveBeenNthCalledWith(5, 'user_following', JSON.stringify(resultUserFollowing))
+      expect(response).toBe('unfollow')
+    })
   })
 })

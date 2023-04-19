@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "baseUrl": "./src",
     "target": "es5",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
@@ -15,13 +14,11 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
-    "downlevelIteration": true,
+    "baseUrl": ".",
     "paths": {
-      "~/pages/*": ["pages/*"],
-      "~/domains/*": ["domains/*"],
-      "~/theme/*": ["theme/*"]
+      "~/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "src/**/*"],
-  "exclude": ["node_modules", "cypress/**/*"]
+  "include": ["next-env.d.ts", "react-unicons.d.ts", "**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules", "cypress/**/*", "./cypress.config.ts"]
 }
