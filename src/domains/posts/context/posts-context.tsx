@@ -1,9 +1,9 @@
 import React, { createContext, useCallback, useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/router'
 
-import { FeedPost, FilterType, Post, User } from '~/domains/platform/entities'
-import titter from '~/domains/platform/services/titter'
+import { FeedPost, FilterType, User } from '~/domains/platform/entities'
 import storage from '~/domains/platform/services/storage'
+import titter from '~/domains/platform/services/titter'
 
 export interface PostsContextProps {
   fetchPosts: (filter: FilterType, search?: string) => void
