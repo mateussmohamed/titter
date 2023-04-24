@@ -1,7 +1,9 @@
+'use client'
+
 import { Fragment } from 'react'
 import { Skeleton, Stack } from '@chakra-ui/react'
 
-import { WritePostInput } from '~/domains/posts/components'
+import { WritePostInput } from '@/domains/posts/components'
 
 interface ProfileWritePostProps {
   showWriterPost?: boolean

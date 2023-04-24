@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
+import { useSearchParams } from 'next/navigation'
 import { useToast } from '@chakra-ui/react'
 
 import { FeedPost, FilterType } from '../entities'
@@ -14,7 +14,7 @@ interface useFeedProps {
 export const useFeed = (props: useFeedProps = { search: '' }) => {
   const { search } = props
   const toast = useToast()
-  const { query } = useRouter()
+  const searchParams = useSearchParams()
   const { user, showWriterPost } = useGetUser()
 
   const [username, setUsername] = useState('')
@@ -69,15 +69,16 @@ export const useFeed = (props: useFeedProps = { search: '' }) => {
   }
 
   useEffect(() => {
-    const usernameFromQuery = query?.profile || query?.username
+    const filterQuery = searchParams.get('filter')
+    const usernameFromQuery = searchParams.get('profile') || searchParams.get('username')
     const username = (usernameFromQuery || user?.username) as string
-    const filterType = usernameFromQuery ? 'user' : query?.filter
+    const filterType = usernameFromQuery ? 'user' : filterQuery
 
     if (username && filterType) {
       setUsername(username)
       setFilter(filterType as FilterType)
     }
-  }, [fetchPosts, query?.filter, query?.profile, query?.username, search, user])
+  }, [fetchPosts, search, searchParams, user])
 
   useEffect(() => {
     if (username && filterType) {

@@ -1,3 +1,5 @@
+'use client'
+
 import { ReactNode } from 'react'
 import Link from 'next/link'
 import { Avatar, Container, Heading, Stack } from '@chakra-ui/react'

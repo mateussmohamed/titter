@@ -1,3 +1,5 @@
+'use client'
+
 import { useCallback, useContext, useState } from 'react'
 import {
   Input,
@@ -12,7 +14,7 @@ import {
 import * as Unicons from '@iconscout/react-unicons'
 import debounce from 'lodash.debounce'
 
-import titter from '~/domains/platform/services/titter'
+import titter from '@/domains/platform/services/titter'
 
 import { PostsContext } from '../context/posts-context'
 

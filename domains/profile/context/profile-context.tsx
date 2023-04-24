@@ -1,7 +1,9 @@
+'use client'
+
 import React, { createContext, useCallback, useEffect, useMemo, useState } from 'react'
 
-import { FeedPost } from '~/domains/platform/entities'
-import titter from '~/domains/platform/services/titter'
+import { FeedPost } from '@/domains/platform/entities'
+import titter from '@/domains/platform/services/titter'
 
 export interface ProfilePostsContextProps {
   fetchPosts?: () => void

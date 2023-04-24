@@ -1,8 +1,10 @@
+'use client'
+
 import { Stack } from '@chakra-ui/react'
 
-import { useFeed } from '~/domains/platform/hooks/use-feed'
-import { useGetProfile } from '~/domains/platform/hooks/use-get-profile'
-import { PostList } from '~/domains/posts/components/post-list'
+import { useFeed } from '@/domains/platform/hooks/use-feed'
+import { useGetProfile } from '@/domains/platform/hooks/use-get-profile'
+import { PostList } from '@/domains/posts/components/post-list'
 
 import { ProfileData } from './profile-data'
 import { ProfileWritePost } from './profile-write-post'

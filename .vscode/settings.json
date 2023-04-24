@@ -1,12 +1,4 @@
 {
-  "editor.fontSize": 14,
-  "terminal.integrated.fontSize": 14,
-  "editor.formatOnSave": true,
-  "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true,
-  },
-  "eslint.validate": [
-    "javascript",
-    "typescript"
-  ]
+  "typescript.tsdk": "node_modules/.pnpm/typescript@5.0.4/node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true
 }

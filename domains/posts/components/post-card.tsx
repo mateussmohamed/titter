@@ -1,10 +1,12 @@
+'use client'
+
 import { memo, useContext, useState } from 'react'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import { Avatar, Button, Stack, Text, useToast } from '@chakra-ui/react'
 import * as Unicons from '@iconscout/react-unicons'
 
-import { FeedPost, PostPayload } from '~/domains/platform/entities'
-import titter from '~/domains/platform/services/titter'
+import { FeedPost, PostPayload } from '@/domains/platform/entities'
+import titter from '@/domains/platform/services/titter'
 
 import { PostsContext } from '../context/posts-context'
 

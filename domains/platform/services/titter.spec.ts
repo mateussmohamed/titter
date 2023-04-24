@@ -1,9 +1,9 @@
 import Chance from 'chance'
 
-import { PostBuilder } from '~/domains/platform/builders/post-builder'
-import { UserBuilder } from '~/domains/platform/builders/user-builder'
-import { Post } from '~/domains/platform/entities'
-import titter from '~/domains/platform/services/titter'
+import { PostBuilder } from '@/domains/platform/builders/post-builder'
+import { UserBuilder } from '@/domains/platform/builders/user-builder'
+import { Post } from '@/domains/platform/entities'
+import titter from '@/domains/platform/services/titter'
 
 describe('titter ~ service', () => {
   afterEach(() => {

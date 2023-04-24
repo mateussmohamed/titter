@@ -1,6 +1,8 @@
+'use client'
+
 import { Avatar, Badge, Box, Button, Skeleton, SkeletonCircle, Stack, Text } from '@chakra-ui/react'
 
-import { Profile } from '~/domains/platform/entities'
+import { Profile } from '@/domains/platform/entities'
 
 interface ProfileDataProps {
   loadingProfile: boolean

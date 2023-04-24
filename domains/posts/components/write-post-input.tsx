@@ -1,7 +1,9 @@
+'use client'
+
 import React, { useState } from 'react'
 import { Button, Stack, Text, Textarea } from '@chakra-ui/react'
 
-import { MAXIMUM_BODY_LENGTH } from '~/domains/platform/constants'
+import { MAXIMUM_BODY_LENGTH } from '@/domains/platform/constants'
 
 interface WritePostInputProps {
   onWritePost: (body: string) => void

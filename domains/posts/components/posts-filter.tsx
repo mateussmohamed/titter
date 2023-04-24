@@ -1,29 +1,35 @@
+'use client'
+
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { FormControl, FormLabel, Stack, Switch } from '@chakra-ui/react'
 
-import { FilterType } from '~/domains/platform/entities'
+import { FilterType } from '@/domains/platform/entities'
 
 export function PostsFilter() {
-  const urlParams = new URLSearchParams(window.location.search)
+  const searchParams = useSearchParams()
 
-  const { push, query } = useRouter()
+  const router = useRouter()
 
-  const [filterValue, toggleFilter] = useState<string>(urlParams.get('filter') || 'all')
+  const username = searchParams.get('username') || searchParams.get('profile')
+
+  const filterParam = searchParams.get('filter')
+
+  const [filterValue, toggleFilter] = useState<string>(searchParams.get('filter') || 'all')
 
   const handleChange = () => {
     const filter = filterValue === 'following' ? 'all' : 'following'
 
     toggleFilter(filter)
 
-    push(`/?filter=${filter}`)
+    router.push(`/?filter=${filter}`)
   }
 
   useEffect(() => {
-    if (query?.filter) {
-      toggleFilter(query?.filter as FilterType)
+    if (filterParam) {
+      toggleFilter(filterParam as FilterType)
     }
-  }, [query?.filter])
+  }, [filterParam])
 
   return (
     <Stack direction="row" py={2} px={5}>

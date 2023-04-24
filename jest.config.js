@@ -20,7 +20,7 @@ const customJestConfig = {
     '!<rootDir>/coverage/**'
   ],
   moduleNameMapper: {
-    '^~/(.*)$': '<rootDir>/$1'
+    '^@/(.*)$': '<rootDir>/$1'
   }
 }
 

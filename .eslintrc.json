@@ -25,7 +25,7 @@
           // Packages. `react` related packages come first.
           ["^react", "^next", "^@?\\w"],
           // Internal packages.
-          ["^(~/domains|~/theme)(/.*|$)"],
+          ["^(@/domains|@/theme)(/.*|$)"],
           // Side effect imports.
           ["^\\u0000"],
           // Parent imports. Put `..` last.

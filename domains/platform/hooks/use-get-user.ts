@@ -1,18 +1,18 @@
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
+import { useSearchParams } from 'next/navigation'
 
 import { User } from '../entities'
 import storage from '../services/storage'
 import titter from '../services/titter'
 
 export const useGetUser = () => {
-  const { query } = useRouter()
+  const searchParams = useSearchParams()
 
   const [user, setuser] = useState<User>()
   const [showWriterPost, toggleWriterPost] = useState(false)
 
   useEffect(() => {
-    const username = (query?.profile || query?.username) as string
+    const username = searchParams.get('profile') || searchParams.get('username')
     const userFromStorage = storage.getItem<User>('current_user')
 
     if (username) {
@@ -22,7 +22,7 @@ export const useGetUser = () => {
 
       return setuser(foundedUser)
     }
-  }, [query?.profile, query?.username])
+  }, [searchParams])
 
   return { user, showWriterPost }
 }

@@ -1,6 +1,8 @@
+'use client'
+
 import { Center, Skeleton, SkeletonCircle, Stack, StackDivider, Text } from '@chakra-ui/react'
 
-import { FeedPost } from '~/domains/platform/entities'
+import { FeedPost } from '@/domains/platform/entities'
 
 import { PostCard } from './post-card'
 

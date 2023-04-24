@@ -1,9 +1,11 @@
-import React, { createContext, useCallback, useEffect, useMemo, useState } from 'react'
-import { useRouter } from 'next/router'
+'use client'
 
-import { FeedPost, FilterType, User } from '~/domains/platform/entities'
-import storage from '~/domains/platform/services/storage'
-import titter from '~/domains/platform/services/titter'
+import React, { createContext, useCallback, useEffect, useMemo, useState } from 'react'
+import { useSearchParams } from 'next/navigation'
+
+import { FeedPost, FilterType, User } from '@/domains/platform/entities'
+import storage from '@/domains/platform/services/storage'
+import titter from '@/domains/platform/services/titter'
 
 export interface PostsContextProps {
   fetchPosts: (filter: FilterType, search?: string) => void
@@ -22,11 +24,13 @@ const initialValues = {
 export const PostsContext = createContext<PostsContextProps>(initialValues)
 
 export function PostsProvider({ children }: { children: React.ReactNode }) {
-  const { query } = useRouter()
+  const searchParams = useSearchParams()
 
   const [loading, setLoading] = useState(true)
   const [user, setUser] = useState<User>()
   const [posts, setPosts] = useState<FeedPost[]>()
+
+  const filter = searchParams.get('filter')
 
   const fetchPosts = useCallback(async (filter: FilterType, search?: string) => {
     setLoading(true)
@@ -39,11 +43,11 @@ export function PostsProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   useEffect(() => {
-    const filterType = query?.filter
+    const filterType = filter
     if (filterType === 'all' || filterType === 'following') {
       fetchPosts(filterType)
     }
-  }, [fetchPosts, query?.filter, user])
+  }, [fetchPosts, filter, user])
 
   useEffect(() => {
     const loggedUser = storage.getItem<User>('current_user')
