@@ -9,7 +9,7 @@ export const useGetUser = () => {
   const searchParams = useSearchParams()
 
   const [user, setuser] = useState<User>()
-  const [showWriterPost, toggleWriterPost] = useState(false)
+  const [showWriterTitter, toggleWriterTitter] = useState(false)
 
   useEffect(() => {
     const username = searchParams.get('profile') || searchParams.get('username')
@@ -18,11 +18,11 @@ export const useGetUser = () => {
     if (username) {
       const foundedUser = titter.getUser(username)
 
-      toggleWriterPost(userFromStorage?.username === username)
+      toggleWriterTitter(userFromStorage?.username === username)
 
       return setuser(foundedUser)
     }
   }, [searchParams])
 
-  return { user, showWriterPost }
+  return { user, showWriterTitter }
 }

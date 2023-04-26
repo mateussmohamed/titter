@@ -1,16 +1,19 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: ['class'],
-  content: ['./pages/**/*.{ts,tsx}', './components/**/*.{ts,tsx}', './UI/**/*.{ts,tsx}', './app/**/*.{ts,tsx}'],
+  content: ['./app/**/*.{ts,tsx}', './components/**/*.{ts,tsx}', './domains/**/*.{ts,tsx}'],
   theme: {
     container: {
-      center: true,
-      padding: '2rem',
-      screens: {
-        '2xl': '1400px'
-      }
+      center: true
+      // padding: '2rem',
+      // screens: {
+      //   '2xl': '1400px'
+      // }
     },
     extend: {
+      fontFamily: {
+        hand: ['var(--font-patrick-hand)']
+      },
       colors: {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',

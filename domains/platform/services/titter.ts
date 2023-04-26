@@ -1,7 +1,7 @@
-import { PostBuilder } from '../builders/post-builder'
-import { MAXIMUM_BODY_LENGTH, MAXIMUM_POSTS_PER_DAY } from '../constants'
-import { FeedPost, FilterType, Post, PostPayload, Profile, User } from '../entities'
-import { formatDate } from '../helpers/format-date'
+import { TitterBuilder } from '../builders/titter-builder'
+import { MAXIMUM_BODY_LENGTH, MAXIMUM_POSTS_PER_DAY } from '../lib/constants'
+import { FilterType, Profile, Titter, TitterFeed, TitterPayload, User } from '../entities'
+import { formatDate } from '../lib/format-date'
 
 import storage from './storage'
 
@@ -10,64 +10,64 @@ const datesAreOnSameDay = (first: Date, second: Date) =>
   first.getMonth() === second.getMonth() &&
   first.getDate() === second.getDate()
 
-const postControlValidation = (posts: Post[], userId: string) => {
+const titterControlValidation = (titters: Titter[], userId: string) => {
   const today = new Date()
 
-  const userPost = posts.filter(post => post.user.id === userId)
-  const postsFromToday = userPost.filter(post => datesAreOnSameDay(today, new Date(post.createdAt)))
-  return postsFromToday.length >= MAXIMUM_POSTS_PER_DAY
+  const userTitter = titters.filter(titter => titter.user.id === userId)
+  const tittersFromToday = userTitter.filter(titter => datesAreOnSameDay(today, new Date(titter.createdAt)))
+  return tittersFromToday.length >= MAXIMUM_POSTS_PER_DAY
 }
 
-const postBodyValidation = (payload: PostPayload) => {
-  return payload.kind !== 'repost' && (payload.body || '').length > MAXIMUM_BODY_LENGTH
+const titterBodyValidation = (payload: TitterPayload) => {
+  return payload.kind !== 'retitter' && (payload.body || '').length > MAXIMUM_BODY_LENGTH
 }
 
-const writePost = (payload: PostPayload) =>
+const newTitter = (payload: TitterPayload) =>
   new Promise((resolve, reject) => {
     setTimeout(() => {
-      if (postBodyValidation(payload)) {
-        return reject(new Error('the post reached the maximum amount of characters.'))
+      if (titterBodyValidation(payload)) {
+        return reject(new Error('the titter reached the maximum amount of characters.'))
       }
 
       const loggedUser = storage.getItem<User>('current_user')
 
       if (loggedUser?.id) {
-        const posts = storage.getItem<Post[]>('posts') || []
+        const titters = storage.getItem<Titter[]>('titters') || []
 
-        if (postControlValidation(posts, loggedUser.id)) {
-          return reject(new Error('you exceeded the post limit for the day.'))
+        if (titterControlValidation(titters, loggedUser.id)) {
+          return reject(new Error('you exceeded the titter limit for the day.'))
         }
 
-        let post = PostBuilder({ ...payload, user: loggedUser })
+        let titter = TitterBuilder({ ...payload, user: loggedUser })
 
-        if (payload?.referencedPost?.id && payload?.referencedPost?.user) {
-          post = {
-            ...post,
-            referencedPost: {
-              ...payload?.referencedPost,
+        if (payload?.referencedTitter?.id && payload?.referencedTitter?.user) {
+          titter = {
+            ...titter,
+            referencedTitter: {
+              ...payload?.referencedTitter,
               user: {
-                id: payload?.referencedPost?.user.id,
-                name: payload?.referencedPost?.user.name,
-                username: payload?.referencedPost?.user.username
+                id: payload?.referencedTitter?.user.id,
+                name: payload?.referencedTitter?.user.name,
+                username: payload?.referencedTitter?.user.username
               }
             }
           }
 
-          if (post.kind === 'quote' && payload.referencedPost) {
-            storage.setValueToItemAtDocument('user_quote', payload?.referencedPost?.id, loggedUser.id)
+          if (titter.kind === 'quote' && payload.referencedTitter) {
+            storage.setValueToItemAtDocument('user_quote', payload?.referencedTitter?.id, loggedUser.id)
           }
 
-          if (post.kind === 'repost' && payload.referencedPost) {
-            storage.setValueToItemAtDocument('user_repost', payload?.referencedPost?.id, loggedUser.id)
+          if (titter.kind === 'retitter' && payload.referencedTitter) {
+            storage.setValueToItemAtDocument('user_retitter', payload?.referencedTitter?.id, loggedUser.id)
           }
         }
 
-        const newPosts = [...posts, post]
+        const newTitters = [...titters, titter]
 
-        storage.setValueToItemAtDocument('user_post', loggedUser.id, post.id)
-        storage.setItem('posts', newPosts)
+        storage.setValueToItemAtDocument('user_titter', loggedUser.id, titter.id)
+        storage.setItem('titters', newTitters)
 
-        return resolve(post)
+        return resolve(titter)
       }
     }, 500)
   })
@@ -93,83 +93,83 @@ const follow = (userId: string) =>
     }, 500)
   })
 
-const sortPost = (a: Post, b: Post) => {
+const sortTitter = (a: Titter, b: Titter) => {
   const aTime = new Date(a.createdAt).getTime()
   const bTime = new Date(b.createdAt).getTime()
 
   return bTime - aTime
 }
 
-const postDateFormate: Intl.DateTimeFormatOptions = {
+const titterDateFormate: Intl.DateTimeFormatOptions = {
   day: 'numeric',
   month: 'short',
   hour: 'numeric',
   minute: 'numeric'
 }
 
-const enhancedPost = (userId: string) => {
-  return (post: Post) => {
-    const quoteData = storage.getDocument('user_quote', post.id)
-    const repostData = storage.getDocument('user_repost', post.id)
+const enhancedTitter = (userId: string) => {
+  return (titter: Titter) => {
+    const quoteData = storage.getDocument('user_quote', titter.id)
+    const retitterData = storage.getDocument('user_retitter', titter.id)
 
     return {
-      ...post,
-      referencedPost: {
-        ...post.referencedPost,
-        createdAt: formatDate(new Date(post.createdAt), postDateFormate)
+      ...titter,
+      referencedTitter: {
+        ...titter.referencedTitter,
+        createdAt: formatDate(new Date(titter.createdAt), titterDateFormate)
       },
-      createdAt: formatDate(new Date(post.createdAt), postDateFormate),
+      createdAt: formatDate(new Date(titter.createdAt), titterDateFormate),
       quote: quoteData,
-      repost: repostData,
-      sameUser: userId === post.user.id,
+      retitter: retitterData,
+      sameUser: userId === titter.user.id,
       loggedUserQuoted: Boolean(quoteData.data.find(item => item === userId)),
-      loggedUserReposted: Boolean(repostData.data.find(item => item === userId))
+      loggedUserRetittered: Boolean(retitterData.data.find(item => item === userId))
     }
   }
 }
 
-const filterByFollowing = (posts: Post[], userId: string) => {
+const filterByFollowing = (titters: Titter[], userId: string) => {
   const followingData = storage.getDocument('user_following', userId)
 
-  return posts.filter(post => Boolean(followingData.data?.find(item => item === post.user.id))).sort(sortPost)
+  return titters.filter(titter => Boolean(followingData.data?.find(item => item === titter.user.id))).sort(sortTitter)
 }
 
-const sortAndEnchancedPost = (posts: Post[], userId: string) => {
-  return posts.sort(sortPost).map(enhancedPost(userId))
+const sortAndEnchancedTitter = (titters: Titter[], userId: string) => {
+  return titters.sort(sortTitter).map(enhancedTitter(userId))
 }
 
 const feed = (filter: FilterType = 'all', username?: string, searchTerm?: string) =>
-  new Promise<FeedPost[]>(resolve => {
+  new Promise<TitterFeed[]>(resolve => {
     setTimeout(() => {
-      const posts = storage.getItem<Post[]>('posts') || []
+      const titters = storage.getItem<Titter[]>('titters') || []
       const loggedUser = storage.getItem<User>('current_user')
 
       if (loggedUser?.id) {
         if (searchTerm) {
           const searchTermInLowerCase = searchTerm.toLowerCase()
-          const allPosts = posts
-            .filter(post => post.kind !== 'repost')
-            .filter(post => post.body?.toLowerCase().includes(searchTermInLowerCase))
+          const allTitters = titters
+            .filter(titter => titter.kind !== 'retitter')
+            .filter(titter => titter.body?.toLowerCase().includes(searchTermInLowerCase))
 
-          return resolve(sortAndEnchancedPost(allPosts, loggedUser.id))
+          return resolve(sortAndEnchancedTitter(allTitters, loggedUser.id))
         }
 
         if (filter === 'user' && username) {
-          const mePosts = sortAndEnchancedPost(
-            posts.filter(post => post.user.username === username),
+          const meTitters = sortAndEnchancedTitter(
+            titters.filter(titter => titter.user.username === username),
             loggedUser.id
           )
 
-          return resolve(mePosts)
+          return resolve(meTitters)
         }
 
         if (filter === 'following') {
-          const followingPosts = sortAndEnchancedPost(filterByFollowing(posts, loggedUser.id), loggedUser.id)
+          const followingTitters = sortAndEnchancedTitter(filterByFollowing(titters, loggedUser.id), loggedUser.id)
 
-          return resolve(followingPosts)
+          return resolve(followingTitters)
         }
 
-        return resolve(sortAndEnchancedPost(posts, loggedUser.id))
+        return resolve(sortAndEnchancedTitter(titters, loggedUser.id))
       }
     }, 500)
   })
@@ -195,7 +195,7 @@ const getUserProfile = (username: string) =>
       if (userProfile?.id && userProfile.createdAt && loggedUser) {
         const followersData = storage.getDocument('user_followers', userProfile.id)
         const followingData = storage.getDocument('user_following', userProfile.id)
-        const postingsData = storage.getDocument('user_post', userProfile.id)
+        const titteringsData = storage.getDocument('user_titter', userProfile.id)
 
         const showFollowButton = loggedUser?.username !== username
         const loggedUserFollowProfile = followersData.data.includes(loggedUser.id)
@@ -209,7 +209,7 @@ const getUserProfile = (username: string) =>
           profileFollowLoggedUser,
           followersCount: followersData.count,
           followingCount: followingData.count,
-          postsCount: postingsData.count
+          tittersCount: titteringsData.count
         }
 
         resolve(data)
@@ -217,6 +217,6 @@ const getUserProfile = (username: string) =>
     }, 500)
   })
 
-const titter = { writePost, feed, getUserProfile, getUser, follow }
+const titter = { newTitter, feed, getUserProfile, getUser, follow }
 
 export default titter

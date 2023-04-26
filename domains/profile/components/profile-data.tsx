@@ -1,8 +1,8 @@
 'use client'
 
-import { Avatar, Badge, Box, Button, Skeleton, SkeletonCircle, Stack, Text } from '@chakra-ui/react'
-
 import { Profile } from '@/domains/platform/entities'
+
+import { Avatar, Badge, Box, Button, Skeleton, SkeletonCircle, Stack, Text } from '@chakra-ui/react'
 
 interface ProfileDataProps {
   loadingProfile: boolean
@@ -77,10 +77,10 @@ export const ProfileData = ({ loadingProfile, profile, handleFollow }: ProfileDa
               •
             </Text>
             <Text color="black" fontWeight="bold" fontSize="large">
-              {profile?.postsCount}
+              {profile?.tittersCount}
             </Text>
             <Text color="gray.500" fontSize="large">
-              Posts
+              Titters
             </Text>
           </Stack>
         </Skeleton>

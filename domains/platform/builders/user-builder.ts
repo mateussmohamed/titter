@@ -1,6 +1,6 @@
-import Chance from 'chance'
-
 import { getDate } from './get-date'
+
+import Chance from 'chance'
 
 function validUsername(value: string) {
   const validLength = value.length >= 3 && value.length <= 15

@@ -2,44 +2,44 @@
 
 import React, { createContext, useCallback, useEffect, useMemo, useState } from 'react'
 
-import { FeedPost } from '@/domains/platform/entities'
+import { Titter } from '@/domains/platform/entities'
 import titter from '@/domains/platform/services/titter'
 
-export interface ProfilePostsContextProps {
-  fetchPosts?: () => void
-  loadingPosts: boolean
-  posts?: FeedPost[]
+export interface ProfileTittersContextProps {
+  fetchTitters?: () => void
+  loadingTitters: boolean
+  titters?: Titter[]
 }
 
-const initialValues: ProfilePostsContextProps = {
-  loadingPosts: true,
-  posts: []
+const initialValues: ProfileTittersContextProps = {
+  loadingTitters: true,
+  titters: []
 }
 
-export const ProfilePostsContext = createContext(initialValues)
+export const ProfileTittersContext = createContext(initialValues)
 
-export function ProfilePostsProvider({ children, username }: { username: string; children: React.ReactNode }) {
-  const [loadingPosts, setLoadingPosts] = useState(true)
-  const [posts, setPosts] = useState<FeedPost[]>([])
+export function ProfileTittersProvider({ children, username }: { username: string; children: React.ReactNode }) {
+  const [loadingTitters, setLoadingTitters] = useState(true)
+  const [titters, setTitters] = useState<Titter[]>([])
 
-  const fetchPosts = useCallback(async () => {
-    setLoadingPosts(true)
+  const fetchTitters = useCallback(async () => {
+    setLoadingTitters(true)
 
-    const posts = await titter.feed('user', username)
+    const titters = await titter.feed('user', username)
 
-    setPosts(posts)
+    setTitters(titters)
 
-    setLoadingPosts(false)
+    setLoadingTitters(false)
   }, [username])
 
   useEffect(() => {
-    fetchPosts()
-  }, [fetchPosts, username])
+    fetchTitters()
+  }, [fetchTitters, username])
 
-  const providerValue: ProfilePostsContextProps = useMemo(
-    () => ({ fetchPosts, loadingPosts, posts }),
-    [fetchPosts, loadingPosts, posts]
+  const providerValue: ProfileTittersContextProps = useMemo(
+    () => ({ fetchTitters, loadingTitters, titters }),
+    [fetchTitters, loadingTitters, titters]
   )
 
-  return <ProfilePostsContext.Provider value={providerValue}>{children}</ProfilePostsContext.Provider>
+  return <ProfileTittersContext.Provider value={providerValue}>{children}</ProfileTittersContext.Provider>
 }

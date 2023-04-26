@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
-import { useToast } from '@chakra-ui/react'
 
-import { FeedPost, FilterType } from '../entities'
+import { useToast } from '@/components/ui/use-toast'
+
+import { FilterType, Titter } from '../entities'
 import titter from '../services/titter'
 
 import { useGetUser } from './use-get-user'
@@ -13,58 +14,56 @@ interface useFeedProps {
 
 export const useFeed = (props: useFeedProps = { search: '' }) => {
   const { search } = props
-  const toast = useToast()
+  const { toast } = useToast()
   const searchParams = useSearchParams()
-  const { user, showWriterPost } = useGetUser()
+  const { user, showWriterTitter } = useGetUser()
 
   const [username, setUsername] = useState('')
   const [filterType, setFilter] = useState<FilterType>('all')
-  const [loadingPosts, setLoadingPosts] = useState(true)
-  const [posts, setPosts] = useState<FeedPost[]>()
+  const [loadingTitters, setLoadingTitters] = useState(true)
+  const [titters, setTitters] = useState<Titter[]>()
 
-  const fetchPosts = useCallback(
+  const fetchTitters = useCallback(
     async (_username: string, _filter: FilterType, _search?: string) => {
       try {
-        setLoadingPosts(true)
+        setLoadingTitters(true)
 
-        const posts = await titter.feed(_filter, _username, _search)
+        const titters = await titter.feed(_filter, _username, _search)
 
-        setPosts(posts)
+        setTitters(titters)
       } catch (error) {
         if (error instanceof Error) {
           toast({
             title: 'Oh no =(',
             description: error.message,
-            status: 'error',
-            duration: 3000,
-            isClosable: true
+            variant: 'destructive',
+            duration: 3000
           })
         }
       } finally {
-        setLoadingPosts(false)
+        setLoadingTitters(false)
       }
     },
     [toast]
   )
 
-  const writePost = async (body: string) => {
+  const newTitter = async (body: string) => {
     try {
-      setLoadingPosts(true)
-      await titter.writePost({ body, kind: 'post', createdAt: new Date().toLocaleString() })
+      setLoadingTitters(true)
+      await titter.newTitter({ body, kind: 'titter', createdAt: new Date().toLocaleString() })
 
-      fetchPosts(username, filterType, search)
+      fetchTitters(username, filterType, search)
     } catch (error) {
       if (error instanceof Error) {
         toast({
           title: 'Oh no =(',
           description: error.message,
-          status: 'error',
-          duration: 3000,
-          isClosable: true
+          variant: 'destructive',
+          duration: 3000
         })
       }
     } finally {
-      setLoadingPosts(false)
+      setLoadingTitters(false)
     }
   }
 
@@ -78,15 +77,15 @@ export const useFeed = (props: useFeedProps = { search: '' }) => {
       setUsername(username)
       setFilter(filterType as FilterType)
     }
-  }, [fetchPosts, search, searchParams, user])
+  }, [fetchTitters, search, searchParams, user])
 
   useEffect(() => {
     if (username && filterType) {
       setUsername(username)
       setFilter(filterType as FilterType)
-      fetchPosts(String(username), filterType as FilterType, search)
+      fetchTitters(String(username), filterType as FilterType, search)
     }
-  }, [fetchPosts, username, filterType, search])
+  }, [fetchTitters, username, filterType, search])
 
-  return { posts, loadingPosts, showWriterPost, fetchPosts, writePost }
+  return { titters, loadingTitters, showWriterTitter, fetchTitters, newTitter }
 }

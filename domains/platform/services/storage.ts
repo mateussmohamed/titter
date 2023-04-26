@@ -1,12 +1,12 @@
 export type StorageKyes =
   | 'users'
-  | 'posts'
+  | 'titters'
   | 'current_user'
   | 'user_followers'
   | 'user_following'
-  | 'user_post'
+  | 'user_titter'
   | 'user_quote'
-  | 'user_repost'
+  | 'user_retitter'
 
 const validate = (key: StorageKyes) => {
   if (typeof key === 'undefined' && typeof window === 'undefined') {
@@ -73,6 +73,8 @@ const setItemAtDocument = <T = Record<string, string[]>>(key: StorageKyes, nodeK
       console.log(error)
     }
   }
+
+  return {}
 }
 
 const getValueFromNode = <T = Record<string, string[]>>(accesKey: StorageKyes, nodeKey: string, defaultValue = []) => {
@@ -86,6 +88,8 @@ const getValueFromNode = <T = Record<string, string[]>>(accesKey: StorageKyes, n
       console.log(error)
     }
   }
+
+  return []
 }
 
 const setValueToItemAtDocument = <T>(key: StorageKyes, nodeKey: string, value: string) => {
@@ -105,6 +109,8 @@ const setValueToItemAtDocument = <T>(key: StorageKyes, nodeKey: string, value: s
       console.log(error)
     }
   }
+
+  return {}
 }
 
 const removeValueItemAtDocument = <T = Record<string, string[]>>(key: StorageKyes, nodeKey: string, value: string) => {
@@ -124,6 +130,8 @@ const removeValueItemAtDocument = <T = Record<string, string[]>>(key: StorageKye
       console.log(error)
     }
   }
+
+  return []
 }
 
 const getValueToItemCollection = (key: StorageKyes, nodeKey: string) => {

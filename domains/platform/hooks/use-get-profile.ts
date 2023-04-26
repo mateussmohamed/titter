@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
-import { useToast } from '@chakra-ui/react'
+
+import { useToast } from '@/components/ui/use-toast'
 
 import { Profile } from '../entities'
 import titter from '../services/titter'
@@ -8,7 +9,7 @@ import { useGetUser } from './use-get-user'
 
 export const useGetProfile = () => {
   const { user } = useGetUser()
-  const toast = useToast()
+  const { toast } = useToast()
 
   const [profile, setProfile] = useState<Profile>()
   const [loadingProfile, setLoading] = useState(true)
@@ -24,9 +25,8 @@ export const useGetProfile = () => {
         toast({
           title: 'Oh no =(',
           description: error.message,
-          status: 'error',
-          duration: 3000,
-          isClosable: true
+          variant: 'destructive',
+          duration: 3000
         })
       }
     } finally {
@@ -46,9 +46,8 @@ export const useGetProfile = () => {
         toast({
           title: 'Oh no =(',
           description: error.message,
-          status: 'error',
-          duration: 3000,
-          isClosable: true
+          variant: 'destructive',
+          duration: 3000
         })
       }
     } finally {

@@ -11,44 +11,44 @@ context('Profile', () => {
   })
 
   it('should displays a first profile page', () => {
-    cy.get('[data-cy="loading-post-list"]').should('have.length', 0)
-    cy.get('[data-cy="post-card-post"]').first().find('[data-cy="open-profile"]').first().click()
+    cy.get('[data-cy="loading-titter-list"]').should('have.length', 0)
+    cy.get('[data-cy="titter-card-titter"]').first().find('[data-cy="open-profile"]').first().click()
 
     cy.url().should('include', '/profile')
 
     cy.get('[data-cy="profile-home"]').should('have.length', 1)
     cy.get('[data-cy="profile-home"]').first().find('[data-cy="loading-profile-write"]').should('have.length', 0)
-    cy.get('[data-cy="profile-home"]').first().find('[data-cy="loading-post-list"]').should('have.length', 0)
+    cy.get('[data-cy="profile-home"]').first().find('[data-cy="loading-titter-list"]').should('have.length', 0)
 
     cy.get('[data-cy="follow-btn"]').should('have.text', 'follow')
 
     cy.get('[data-cy="follow-btn"]').click()
     cy.get('[data-cy="follow-btn"]').should('have.text', 'unfollow')
 
-    cy.get('[data-cy="post-card-quote-button"]').should('have.length.greaterThan', 0)
-    cy.get('[data-cy="post-card-repost-button"]').should('have.length.greaterThan', 0)
+    cy.get('[data-cy="titter-card-quote-button"]').should('have.length.greaterThan', 0)
+    cy.get('[data-cy="titter-card-retitter-button"]').should('have.length.greaterThan', 0)
   })
 
-  it('should write a post in current user profile page', () => {
-    cy.get('[data-cy="loading-post-list"]').should('have.length', 0)
+  it('should write a titter in current user profile page', () => {
+    cy.get('[data-cy="loading-titter-list"]').should('have.length', 0)
 
     cy.get('[data-cy="open-current-profile"]').first().click()
 
     cy.url().should('include', '/profile')
 
     cy.get('[data-cy="profile-home"]').should('have.length', 1)
-    cy.get('[data-cy="profile-home"]').find('[data-cy="post-card-quote-button"]').should('have.length', 0)
-    cy.get('[data-cy="profile-home"]').find('[data-cy="post-card-repost-button"]').should('have.length', 0)
+    cy.get('[data-cy="profile-home"]').find('[data-cy="titter-card-quote-button"]').should('have.length', 0)
+    cy.get('[data-cy="profile-home"]').find('[data-cy="titter-card-retitter-button"]').should('have.length', 0)
 
-    cy.get('[data-cy="profile-home"]').first().find('[data-cy="post-input"]').type('nice post!!!')
-    cy.get('[data-cy="profile-home"]').first().find('[data-cy="post-btn"]').click()
+    cy.get('[data-cy="profile-home"]').first().find('[data-cy="titter-input"]').type('nice titter!!!')
+    cy.get('[data-cy="profile-home"]').first().find('[data-cy="titter-btn"]').click()
 
-    cy.get('[data-cy="profile-home"]').first().find('[data-cy="loading-post-list"]').should('have.length', 1)
+    cy.get('[data-cy="profile-home"]').first().find('[data-cy="loading-titter-list"]').should('have.length', 1)
 
     cy.get('[data-cy="profile-home"]')
       .first()
-      .find('[data-cy="post-card-body"]')
+      .find('[data-cy="titter-card-body"]')
       .first()
-      .should('have.text', 'nice post!!!')
+      .should('have.text', 'nice titter!!!')
   })
 })
