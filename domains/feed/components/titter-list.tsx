@@ -1,26 +1,27 @@
 'use client'
 
-import { Fragment, useContext, useMemo } from 'react'
+import { Fragment, useMemo } from 'react'
 
 import { Separator } from '@/components/ui/separator'
-import { Titter } from '@/domains/platform/entities'
-
-import { FeedContext } from '../context/feed-context'
+import { TitterFeed } from '@/domains/platform/entities'
 
 import { TitterCard } from './titter-card'
 import { TitterListSkeleton } from './titter-list-skeleton'
 
-export const TitterList = () => {
-  const { loading, titters } = useContext(FeedContext)
+interface TitterListProps {
+  loadingTitters?: boolean
+  titters?: TitterFeed[]
+}
 
+export const TitterList = ({ loadingTitters, titters }: TitterListProps) => {
   const hasTitters = Boolean(titters?.length)
   const lastIndex = useMemo(() => (titters || [])?.length - 1, [titters])
 
-  if (loading) {
+  if (loadingTitters) {
     return <TitterListSkeleton />
   }
 
-  if (!hasTitters && loading === false) {
+  if (!hasTitters && loadingTitters === false) {
     return (
       <div className="p-20">
         <p className="text-center text-4xl">No Data</p>

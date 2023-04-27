@@ -1,6 +1,6 @@
 import { TitterBuilder } from '../builders/titter-builder'
-import { MAXIMUM_BODY_LENGTH, MAXIMUM_POSTS_PER_DAY } from '../lib/constants'
 import { FilterType, Profile, Titter, TitterFeed, TitterPayload, User } from '../entities'
+import { MAXIMUM_BODY_LENGTH, MAXIMUM_POSTS_PER_DAY } from '../lib/constants'
 import { formatDate } from '../lib/format-date'
 
 import storage from './storage'
@@ -69,7 +69,7 @@ const newTitter = (payload: TitterPayload) =>
 
         return resolve(titter)
       }
-    }, 500)
+    }, 1000)
   })
 
 const follow = (userId: string) =>
@@ -90,7 +90,7 @@ const follow = (userId: string) =>
         storage.setValueToItemAtDocument('user_following', loggedUser!.id, userId)
         return resolve('follow')
       }
-    }, 500)
+    }, 200)
   })
 
 const sortTitter = (a: Titter, b: Titter) => {
@@ -107,7 +107,7 @@ const titterDateFormate: Intl.DateTimeFormatOptions = {
   minute: 'numeric'
 }
 
-const enhancedTitter = (userId: string) => {
+const enhancedTitter = (loggedUserId: string) => {
   return (titter: Titter) => {
     const quoteData = storage.getDocument('user_quote', titter.id)
     const retitterData = storage.getDocument('user_retitter', titter.id)
@@ -121,21 +121,21 @@ const enhancedTitter = (userId: string) => {
       createdAt: formatDate(new Date(titter.createdAt), titterDateFormate),
       quote: quoteData,
       retitter: retitterData,
-      sameUser: userId === titter.user.id,
-      loggedUserQuoted: Boolean(quoteData.data.find(item => item === userId)),
-      loggedUserRetittered: Boolean(retitterData.data.find(item => item === userId))
+      sameUser: loggedUserId === titter.user.id,
+      loggedUserQuoted: Boolean(quoteData.data.find(item => item === loggedUserId)),
+      loggedUserRetittered: Boolean(retitterData.data.find(item => item === loggedUserId))
     }
   }
 }
 
-const filterByFollowing = (titters: Titter[], userId: string) => {
-  const followingData = storage.getDocument('user_following', userId)
+const filterByFollowing = (titters: Titter[], loggedUserId: string) => {
+  const followingData = storage.getDocument('user_following', loggedUserId)
 
   return titters.filter(titter => Boolean(followingData.data?.find(item => item === titter.user.id))).sort(sortTitter)
 }
 
-const sortAndEnchancedTitter = (titters: Titter[], userId: string) => {
-  return titters.sort(sortTitter).map(enhancedTitter(userId))
+const sortAndEnchancedTitter = (titters: Titter[], loggedUserId: string) => {
+  return titters.sort(sortTitter).map(enhancedTitter(loggedUserId))
 }
 
 const feed = (filter: FilterType = 'all', username?: string, searchTerm?: string) =>
@@ -154,7 +154,7 @@ const feed = (filter: FilterType = 'all', username?: string, searchTerm?: string
           return resolve(sortAndEnchancedTitter(allTitters, loggedUser.id))
         }
 
-        if (filter === 'user' && username) {
+        if (['user', 'me'].includes(filter) && username) {
           const meTitters = sortAndEnchancedTitter(
             titters.filter(titter => titter.user.username === username),
             loggedUser.id
@@ -171,7 +171,7 @@ const feed = (filter: FilterType = 'all', username?: string, searchTerm?: string
 
         return resolve(sortAndEnchancedTitter(titters, loggedUser.id))
       }
-    }, 500)
+    }, 1000)
   })
 
 const getUser = (username: string) => {
@@ -214,7 +214,7 @@ const getUserProfile = (username: string) =>
 
         resolve(data)
       }
-    }, 500)
+    }, 1000)
   })
 
 const titter = { newTitter, feed, getUserProfile, getUser, follow }

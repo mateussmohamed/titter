@@ -17,9 +17,9 @@ export function HeaderAvatar() {
   })
 
   return (
-    <Link href={`/?profile=${user?.username}`} as={`/profile/${user?.username}`}>
+    <Link href={`/user/${user?.username}`}>
       <Avatar className="cursor-pointer text-2xl text-gray-200">
-        <AvatarFallback className="bg-slate-900">{abbreviation(user?.name)}</AvatarFallback>
+        <AvatarFallback className="bg-slate-950">{abbreviation(user?.name)}</AvatarFallback>
       </Avatar>
     </Link>
   )

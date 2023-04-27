@@ -1,24 +1,27 @@
 'use client'
 
-import { useContext, useState } from 'react'
+import { useState } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { useToast } from '@/components/ui/use-toast'
+import { TitterPayload } from '@/domains/platform/entities'
 import { MAXIMUM_BODY_LENGTH } from '@/domains/platform/lib/constants'
-import { KindTitter, TitterPayload } from '@/domains/platform/entities'
-import titterService from '@/domains/platform/services/titter'
 import { cn } from '@/domains/platform/lib/utils'
 
-import { FeedContext } from '../context/feed-context'
+import { useFeedContext } from '../context/feed-context'
+
+import { Loader2 } from 'lucide-react'
 
 interface AddNewTitterProps {
   payload?: TitterPayload
 }
 
 export function AddNewTitter({ payload }: AddNewTitterProps) {
+  const { addNewTitter } = useFeedContext()
+  const [loadingAddNewTitter, setLoadingAddNewTitter] = useState(false)
+
   const [body, setBody] = useState('')
-  const { fetchTitters } = useContext(FeedContext)
   const { toast } = useToast()
 
   const remainingChars = MAXIMUM_BODY_LENGTH - body.length
@@ -28,16 +31,14 @@ export function AddNewTitter({ payload }: AddNewTitterProps) {
     setBody(e.currentTarget.value)
   }
 
-  const addNewTitter = async (body: string) => {
+  const handleAddNewTitter = async (body: string) => {
     try {
-      await titterService.newTitter({
+      setLoadingAddNewTitter(true)
+      await addNewTitter({
         kind: 'titter',
         ...payload,
-        body,
-        createdAt: new Date().toLocaleString()
+        body
       })
-
-      fetchTitters('all')
 
       setBody('')
     } catch (error) {
@@ -49,11 +50,9 @@ export function AddNewTitter({ payload }: AddNewTitterProps) {
           duration: 3000
         })
       }
+    } finally {
+      setLoadingAddNewTitter(false)
     }
-  }
-
-  const handleAddNewTitter = () => {
-    addNewTitter(body)
   }
 
   return (
@@ -67,7 +66,12 @@ export function AddNewTitter({ payload }: AddNewTitterProps) {
       />
       <div className="flex flex-row items-center justify-end gap-4">
         <span className={cn(isInvalidValue ? 'text-red-600' : 'text-slate-500')}>{remainingChars}</span>
-        <Button disabled={body.length === 0} onClick={handleAddNewTitter} data-cy="titter-btn">
+        <Button
+          disabled={loadingAddNewTitter || body.length === 0}
+          onClick={() => handleAddNewTitter(body)}
+          data-cy="titter-btn"
+        >
+          {loadingAddNewTitter ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
           New Titter
         </Button>
       </div>

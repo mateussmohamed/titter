@@ -63,7 +63,7 @@ export function seedGenerator() {
     if (canPerist()) {
       try {
         const loggedUser = UserBuilder()
-        const usersToPersist = [...generateArray(20).map(() => UserBuilder()), loggedUser].map(user => {
+        const usersToPersist = [...generateArray(30).map(() => UserBuilder()), loggedUser].map(user => {
           storage.setItemAtDocument('users', user.id, user)
           return user
         })
@@ -91,7 +91,6 @@ export function seedGenerator() {
           const referencedTitter = getRandomicTitter(user)
           const createdAt = addDays(new Date(referencedTitter?.createdAt), 1).toLocaleString()
           const chanceQuote = new Chance()
-
           insertTitter({
             user,
             referencedTitter,
@@ -101,9 +100,9 @@ export function seedGenerator() {
           })
         }
 
-        const firstUserGroup = usersToPersist.slice(0, 4)
-        const secondUserGroup = usersToPersist.slice(5, 9)
-        const thirdUserGroup = usersToPersist.slice(10, 19)
+        const firstUserGroup = usersToPersist.slice(0, 7)
+        const secondUserGroup = usersToPersist.slice(8, 15)
+        const thirdUserGroup = usersToPersist.slice(16, 22)
 
         firstUserGroup.forEach(addRandomicRetitters)
         secondUserGroup.forEach(addRandomicQuotes)

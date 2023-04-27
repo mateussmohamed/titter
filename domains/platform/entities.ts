@@ -1,10 +1,13 @@
 export type KindTitter = 'titter' | 'retitter' | 'quote'
-export type FilterType = 'all' | 'following' | 'user'
+export type FilterType = 'all' | 'following' | 'user' | 'me'
 
 export interface User {
   id: string
   name: string
   username: string
+  bio: string
+  birthday: string
+  location: string
   createdAt: string
 }
 

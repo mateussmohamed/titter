@@ -13,13 +13,14 @@ const patrick = Patrick_Hand({
   display: 'swap'
 })
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({ children, modal }: { children: React.ReactNode; modal: React.ReactNode }) {
   return (
     <html lang="en" className={`${patrick.className} ${patrick.variable}`}>
       <body className="min-h-screen">
         <Header />
-        <main className="min-h-screen bg-slate-100 pb-4 pt-[100px]">{children}</main>
+        <main className="min-h-screen bg-slate-100 pt-[100px]">{children}</main>
         <Footer />
+        {modal}
         <Toaster />
       </body>
     </html>

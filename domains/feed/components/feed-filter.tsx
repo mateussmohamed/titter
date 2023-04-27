@@ -1,7 +1,6 @@
 'use client'
 
-import { useCallback, useContext, useEffect, useState } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useCallback, useContext, useState } from 'react'
 
 import { Input } from '@/components/ui/input'
 import { Separator } from '@/components/ui/separator'
@@ -14,36 +13,27 @@ import debounce from 'lodash.debounce'
 import { Search } from 'lucide-react'
 
 export function FeedFilter() {
-  const searchParams = useSearchParams()
-  const router = useRouter()
   const { fetchTitters } = useContext(FeedContext)
   const [searchTerm, setSearchTerm] = useState('')
-  const [filterValue, toggleFilter] = useState<string>(searchParams.get('filter') || 'all')
-  const filterFromQuery = searchParams.get('filter')
+  const [filterValue, toggleFilter] = useState<FilterType>('all')
 
   const handleDebounceFn = (value: string) => {
-    fetchTitters('all', value)
+    fetchTitters(filterValue, undefined, value)
   }
-
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const debounceFn = useCallback(debounce(handleDebounceFn, 500), [])
 
   const handleInputChange = (e: React.FormEvent<HTMLInputElement>) => {
-    setSearchTerm(e.currentTarget.value)
-    debounceFn(e.currentTarget.value)
+    const value = e.currentTarget.value
+    setSearchTerm(value)
+    debounceFn(value)
   }
 
-  const handleChange = () => {
+  const handleChangeFilter = () => {
     const filter = filterValue === 'following' ? 'all' : 'following'
     toggleFilter(filter)
-    router.push(`/?filter=${filter}`)
+    fetchTitters(filter, undefined)
   }
-
-  useEffect(() => {
-    if (filterFromQuery) {
-      toggleFilter(filterFromQuery as FilterType)
-    }
-  }, [filterFromQuery])
 
   return (
     <div className="mb-3 flex flex-col gap-2">
@@ -61,14 +51,14 @@ export function FeedFilter() {
             <Search />
           </div>
         </div>
-        <div className="flex min-w-[180px] flex-row items-center justify-end px-5">
+        <div className="flex min-w-[200px] flex-row items-center justify-end px-5">
           <label htmlFor="home-filter" className="mb-0 mr-2">
             {filterValue === 'following' ? 'Following titters' : 'All titters'}
           </label>
           <Switch
             id="home-filter"
             data-cy="home-filter"
-            onCheckedChange={handleChange}
+            onCheckedChange={handleChangeFilter}
             checked={filterValue === 'following'}
             value={filterValue}
           />

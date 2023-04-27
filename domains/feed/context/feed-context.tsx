@@ -1,67 +1,105 @@
 'use client'
 
-import React, { createContext, useCallback, useEffect, useMemo, useState } from 'react'
-import { useSearchParams } from 'next/navigation'
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { useParams } from 'next/navigation'
 
-import { FilterType, Titter, TitterFeed, User } from '@/domains/platform/entities'
-import storage from '@/domains/platform/services/storage'
-import titter from '@/domains/platform/services/titter'
+import { useToast } from '@/components/ui/use-toast'
+import { FilterType, TitterFeed, TitterPayload, User } from '@/domains/platform/entities'
+import titterService from '@/domains/platform/services/titter'
 
 export interface FeedContextProps {
-  fetchTitters: (filter: FilterType, search?: string) => void
-  loading: boolean
+  fetchTitters: (filter: FilterType, username?: string, search?: string) => void
+  addNewTitter: (payload: TitterPayload) => void
+  loadingTitters: boolean
   titters?: TitterFeed[]
   user?: User
 }
 
 const initialValues = {
   fetchTitters: () => undefined,
-  loading: true,
+  addNewTitter: () => undefined,
+  loadingTitters: true,
   user: undefined,
   titters: []
 }
 
 export const FeedContext = createContext<FeedContextProps>(initialValues)
 
-export function FeedProvider({ children }: { children: React.ReactNode }) {
-  const searchParams = useSearchParams()
+export const useFeedContext = () => {
+  const context = useContext(FeedContext)
 
-  const [loading, setLoading] = useState(true)
-  const [user, setUser] = useState<User>()
+  if (!context) {
+    throw Error('No Feed context initilized!')
+  }
+
+  return context
+}
+
+export function FeedProvider({ children, defaultUsername }: { defaultUsername?: string; children: React.ReactNode }) {
+  const [loadingTitters, setLoadingTitters] = useState(true)
   const [titters, setTitters] = useState<TitterFeed[]>()
 
-  const filter = searchParams.get('filter')
+  const { toast } = useToast()
+  const params = useParams()
 
-  const fetchTitters = useCallback(async (filter: FilterType, search?: string) => {
-    setLoading(true)
+  const usernameFromQuery = defaultUsername ?? params.username
+  const userFromStorage = titterService.getUser(usernameFromQuery)
+  const currentUserName = (usernameFromQuery ?? userFromStorage?.username) as string
+  const isMe = userFromStorage?.username && currentUserName && userFromStorage?.username === currentUserName
+  const filterQuery = isMe ? 'me' : currentUserName ? 'user' : 'all'
 
-    const titters = await titter.feed(filter, user?.username, search)
+  const fetchTitters = useCallback(
+    async (_filter: FilterType = 'all', _username?: string, _search?: string) => {
+      try {
+        setLoadingTitters(true)
+        const titters = await titterService.feed(_filter, _username, _search)
+        setTitters(titters)
+      } catch (error) {
+        if (error instanceof Error) {
+          toast({
+            title: 'Oh no =(',
+            description: error.message,
+            variant: 'destructive',
+            duration: 3000
+          })
+        }
+      } finally {
+        setLoadingTitters(false)
+      }
+    },
+    [toast]
+  )
 
-    setTitters(titters)
-
-    setLoading(false)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  const addNewTitter = useCallback(
+    async (payload: TitterPayload) => {
+      try {
+        await titterService.newTitter({
+          kind: 'titter',
+          ...payload,
+          createdAt: new Date().toLocaleString()
+        })
+        fetchTitters(filterQuery, currentUserName)
+      } catch (error) {
+        if (error instanceof Error) {
+          toast({
+            title: 'Oh no =(',
+            description: error.message,
+            variant: 'destructive',
+            duration: 3000
+          })
+        }
+      }
+    },
+    [fetchTitters, filterQuery, toast, currentUserName]
+  )
 
   useEffect(() => {
-    const filterType = filter
-    if (filterType === 'all' || filterType === 'following') {
-      fetchTitters(filterType)
-    }
-  }, [fetchTitters, filter, user])
-
-  useEffect(() => {
-    const loggedUser = storage.getItem<User>('current_user')
-
-    if (loggedUser) {
-      setUser(loggedUser)
-      fetchTitters('all')
-    }
-  }, [fetchTitters])
+    fetchTitters(filterQuery, currentUserName)
+  }, [fetchTitters, currentUserName, filterQuery])
 
   const providerValue: FeedContextProps = useMemo(
-    () => ({ loading, fetchTitters, titters, user }),
-    [fetchTitters, loading, titters, user]
+    () => ({ loadingTitters, titters, user: userFromStorage, addNewTitter, fetchTitters }),
+    [addNewTitter, fetchTitters, loadingTitters, titters, userFromStorage]
   )
 
   return <FeedContext.Provider value={providerValue}>{children}</FeedContext.Provider>
