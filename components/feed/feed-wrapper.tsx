@@ -2,12 +2,11 @@
 
 import { memo } from 'react'
 
-import { useEffectOnce } from '@/domains/platform/lib/hooks'
-import { seedGenerator } from '@/domains/platform/lib/seed-generator'
-
-import { FeedProvider } from '../context/feed-context'
+import { seedGenerator } from '@/lib/seed-generator'
+import { useEffectOnce } from '@/lib/utils'
 
 import { FeedContainer } from './feed-container'
+import { FeedProvider } from './feed-context'
 
 const FeedWrapperComponent = () => {
   useEffectOnce(() => {

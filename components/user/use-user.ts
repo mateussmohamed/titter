@@ -2,12 +2,11 @@ import { useState } from 'react'
 import { useParams } from 'next/navigation'
 
 import { useToast } from '@/components/ui/use-toast'
+import { Profile } from '@/entities'
+import { titterService } from '@/lib/titter'
+import { useEffectOnce } from '@/lib/utils'
 
-import { Profile } from '../entities'
-import { useEffectOnce } from '../lib/hooks'
-import titterService from '../services/titter'
-
-export const useUser = (usernameFromParam?: string) => {
+export const useUserInfo = (usernameFromParam?: string) => {
   const { toast } = useToast()
 
   const [userInfo, setUserInfo] = useState<Profile>()

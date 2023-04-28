@@ -4,8 +4,8 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 // import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
-import { useUser } from '@/domains/platform/hooks/use-user'
-import { abbreviation } from '@/domains/platform/lib/utils'
+import { useUserInfo } from '@/components/user/use-user'
+import { abbreviation } from '@/lib/utils'
 
 import { Cake, Calendar, Loader2, MapPin } from 'lucide-react'
 
@@ -14,13 +14,16 @@ interface UserInfoProps {
 }
 
 export function UserInfo({ username }: UserInfoProps) {
-  const { userInfo, loadingUserInfo, loadingFollowUser, followUser } = useUser(username)
+  const { userInfo, loadingUserInfo, loadingFollowUser, followUser } = useUserInfo(username)
 
   const handleFollow = () => followUser()
 
   return (
     <>
-      <div className="flex h-[200px] flex-row items-center justify-between rounded-bl-[4px] rounded-br-[4px] bg-black/[.40] px-5">
+      <div
+        className="flex h-[200px] flex-row items-center justify-between rounded-bl-[4px] rounded-br-[4px] bg-black/[.40] px-5"
+        data-cy="user-info-home"
+      >
         {loadingUserInfo ? (
           <Skeleton className=" h-[128px] w-[128px] rounded-full bg-slate-950" />
         ) : (

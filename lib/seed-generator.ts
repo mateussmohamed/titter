@@ -1,7 +1,9 @@
-import { TitterBuilder } from '../builders/titter-builder'
-import { UserBuilder } from '../builders/user-builder'
-import { Titter, TitterPayload, User } from '../entities'
-import storage, { StorageKyes } from '../services/storage'
+import type { Titter, TitterPayload, User } from '../entities'
+
+import { TitterBuilder } from './builders/titter-builder'
+import { UserBuilder } from './builders/user-builder'
+import type { StorageKyes } from './storage'
+import { storageService } from './storage'
 
 import { Chance } from 'chance'
 
@@ -22,21 +24,21 @@ function addDays(date: Date, days: number) {
 }
 
 function insertTitter(payload: TitterPayload) {
-  const titters = storage.getItem<Titter[]>('titters') || []
+  const titters = storageService.getItem<Titter[]>('titters') || []
   const titter = TitterBuilder(payload)
 
   const newTitters = [...titters, titter]
-  storage.setItem('titters', newTitters)
+  storageService.setItem('titters', newTitters)
 
-  storage.setValueToItemAtDocument('user_titter', payload!.user!.id, titter.id)
+  storageService.setValueToItemAtDocument('user_titter', payload!.user!.id, titter.id)
 
   if (titter?.referencedTitter?.id) {
     if (titter.kind === 'quote') {
-      storage.setValueToItemAtDocument('user_quote', titter.referencedTitter!.id, titter.user!.id)
+      storageService.setValueToItemAtDocument('user_quote', titter.referencedTitter!.id, titter.user!.id)
     }
 
     if (titter.kind === 'retitter') {
-      storage.setValueToItemAtDocument('user_retitter', titter.referencedTitter!.id, titter.user!.id)
+      storageService.setValueToItemAtDocument('user_retitter', titter.referencedTitter!.id, titter.user!.id)
     }
   }
 
@@ -55,7 +57,7 @@ function canPerist() {
     'user_quote',
     'user_retitter'
   ]
-  return !storageKeys.some(key => storage.existItem(key))
+  return !storageKeys.some(key => storageService.existItem(key))
 }
 
 export function seedGenerator() {
@@ -64,11 +66,11 @@ export function seedGenerator() {
       try {
         const loggedUser = UserBuilder()
         const usersToPersist = [...generateArray(30).map(() => UserBuilder()), loggedUser].map(user => {
-          storage.setItemAtDocument('users', user.id, user)
+          storageService.setItemAtDocument('users', user.id, user)
           return user
         })
 
-        storage.setItem('current_user', loggedUser)
+        storageService.setItem('current_user', loggedUser)
 
         const titterByUser = usersToPersist.map(user =>
           insertTitter({ kind: 'titter', user, referencedTitter: undefined })
@@ -115,7 +117,7 @@ export function seedGenerator() {
 
           const ramdomFollowersNumber = getRandomArbitrary(0, filteredLength)
           generateArray(ramdomFollowersNumber).forEach(() =>
-            storage.setValueToItemAtDocument(
+            storageService.setValueToItemAtDocument(
               'user_followers',
               String(user.id),
               filteredUsers[getRandomArbitrary(0, filteredLength)]
@@ -124,7 +126,7 @@ export function seedGenerator() {
 
           const ramdomFollowingNumber = getRandomArbitrary(0, filteredLength)
           generateArray(ramdomFollowingNumber).forEach(() =>
-            storage.setValueToItemAtDocument(
+            storageService.setValueToItemAtDocument(
               'user_following',
               String(user.id),
               filteredUsers[getRandomArbitrary(0, filteredLength)]

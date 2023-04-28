@@ -1,4 +1,4 @@
-export type KindTitter = 'titter' | 'retitter' | 'quote'
+type KindTitter = 'titter' | 'retitter' | 'quote'
 export type FilterType = 'all' | 'following' | 'user' | 'me'
 
 export interface User {

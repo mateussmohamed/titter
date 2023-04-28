@@ -1,4 +1,4 @@
-import { TitterPayload } from '../entities'
+import type { TitterPayload } from '../../entities'
 
 import { getDate } from './get-date'
 

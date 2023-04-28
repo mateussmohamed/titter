@@ -1,7 +1,8 @@
-import { TitterBuilder } from '@/domains/platform/builders/titter-builder'
-import { UserBuilder } from '@/domains/platform/builders/user-builder'
-import { Titter } from '@/domains/platform/entities'
-import titter from '@/domains/platform/services/titter'
+import type { Titter } from '@/entities'
+import { TitterBuilder } from '@/lib/builders/titter-builder'
+import { UserBuilder } from '@/lib/builders/user-builder'
+
+import { titterService } from './titter'
 
 import Chance from 'chance'
 
@@ -13,7 +14,7 @@ describe('titter ~ service', () => {
     ;(localStorage.setItem as jest.Mocked<any>).mockClear()
   })
 
-  describe('when titter.newTitter is called', () => {
+  describe('when titterService.newTitter is called', () => {
     describe('when an error happens to submit a titter', () => {
       test('should return "the titter reached the maximum amount of characters." when user try send body with more than 777 characters', async () => {
         try {
@@ -22,7 +23,7 @@ describe('titter ~ service', () => {
 
           const ChanceTitter = new Chance()
 
-          await titter.newTitter({
+          await titterService.newTitter({
             body: ChanceTitter.paragraph({ sentences: 10 }),
             createdAt: new Date().toLocaleString()
           })
@@ -46,7 +47,7 @@ describe('titter ~ service', () => {
 
           localStorage.setItem('titters', JSON.stringify(titters))
 
-          await titter.newTitter({ user: mockLoggedUser, createdAt, kind: 'titter' })
+          await titterService.newTitter({ user: mockLoggedUser, createdAt, kind: 'titter' })
         } catch (error) {
           if (error instanceof Error) {
             expect(error).toBeInstanceOf(Error)
@@ -60,7 +61,7 @@ describe('titter ~ service', () => {
       const mockLoggedUser = UserBuilder()
       localStorage.setItem('current_user', JSON.stringify(mockLoggedUser))
 
-      const response = (await titter.newTitter({ createdAt: new Date().toLocaleString() })) as Titter
+      const response = (await titterService.newTitter({ createdAt: new Date().toLocaleString() })) as Titter
 
       const user_titter = { [mockLoggedUser.id]: [response.id] }
 
@@ -78,7 +79,7 @@ describe('titter ~ service', () => {
 
       const mockRetitter = TitterBuilder({ kind: 'titter', user: UserBuilder() })
 
-      const response = (await titter.newTitter({
+      const response = (await titterService.newTitter({
         kind: 'retitter',
         createdAt: new Date().toLocaleString(),
         referencedTitter: mockRetitter
@@ -102,7 +103,7 @@ describe('titter ~ service', () => {
 
       const mockQuote = TitterBuilder({ kind: 'titter', user: UserBuilder() })
 
-      const response = (await titter.newTitter({
+      const response = (await titterService.newTitter({
         kind: 'quote',
         createdAt: new Date().toLocaleString(),
         referencedTitter: mockQuote
@@ -137,7 +138,7 @@ describe('titter ~ service', () => {
 
         localStorage.setItem('titters', JSON.stringify(mockTitters))
 
-        const response = await titter.feed()
+        const response = await titterService.feed()
 
         expect(response).toHaveLength(20)
         expect(response[0]).toHaveProperty('createdAt')
@@ -163,7 +164,7 @@ describe('titter ~ service', () => {
         localStorage.setItem('titters', JSON.stringify(mockTitters))
         localStorage.setItem('user_following', JSON.stringify(userFollowingData))
 
-        const response = await titter.feed('following')
+        const response = await titterService.feed('following')
 
         expect(response).toHaveLength(12)
       })
@@ -180,7 +181,7 @@ describe('titter ~ service', () => {
 
         localStorage.setItem('titters', JSON.stringify(mockTitters))
 
-        const response = await titter.feed('user', mockLoggedUser.username)
+        const response = await titterService.feed('user', mockLoggedUser.username)
 
         expect(response).toHaveLength(3)
       })
@@ -200,7 +201,7 @@ describe('titter ~ service', () => {
         localStorage.setItem('titters', JSON.stringify(mockTitters))
         localStorage.setItem('user_following', JSON.stringify(userFollowingData))
 
-        const response = await titter.feed('following')
+        const response = await titterService.feed('following')
 
         expect(response).toHaveLength(12)
       })
@@ -220,14 +221,14 @@ describe('titter ~ service', () => {
 
         localStorage.setItem('titters', JSON.stringify(mockTitters))
 
-        const response = await titter.feed('all', '', 'mateus is a nice guy')
+        const response = await titterService.feed('all', '', 'mateus is a nice guy')
 
         expect(response).toHaveLength(2)
       })
     })
   })
 
-  describe('when titter.getUserProfile is called', () => {
+  describe('when titterService.getUserProfile is called', () => {
     test('should be return "user not found!" when the username not found', async () => {
       const mockUsers = Array(5)
         .fill(null)
@@ -236,7 +237,7 @@ describe('titter ~ service', () => {
       localStorage.setItem('users', JSON.stringify(mockUsers))
 
       try {
-        await titter.getUserProfile('@mateussmohamed')
+        await titterService.getUserProfile('@mateussmohamed')
       } catch (error) {
         if (error instanceof Error) {
           expect(error).toBeInstanceOf(Error)
@@ -273,7 +274,7 @@ describe('titter ~ service', () => {
       localStorage.setItem('user_followers', JSON.stringify(userFollowersData))
       localStorage.setItem('user_titter', JSON.stringify(userTitterData))
 
-      const response = await titter.getUserProfile(mockUser.username)
+      const response = await titterService.getUserProfile(mockUser.username)
 
       expect(response.username).toBe(mockUser.username)
       expect(response.showFollowButton).toBe(true)
@@ -310,7 +311,7 @@ describe('titter ~ service', () => {
       localStorage.setItem('user_followers', JSON.stringify(userFollowersData))
       localStorage.setItem('user_titter', JSON.stringify(userTitterData))
 
-      const response = await titter.getUserProfile(mockLoggedUser.username)
+      const response = await titterService.getUserProfile(mockLoggedUser.username)
 
       expect(response.username).toBe(mockLoggedUser.username)
       expect(response.showFollowButton).toBe(false)
@@ -321,7 +322,7 @@ describe('titter ~ service', () => {
     })
   })
 
-  describe('when titter.follow is called', () => {
+  describe('when titterService.follow is called', () => {
     test('should be follow an user', async () => {
       const mockUserToFollowing = UserBuilder()
       const mockLoggedUser = UserBuilder()
@@ -347,7 +348,7 @@ describe('titter ~ service', () => {
       localStorage.setItem('user_followers', JSON.stringify(userFollowersData))
       localStorage.setItem('user_following', JSON.stringify(resultUserFollowing))
 
-      const response = await titter.follow(mockUserToFollowing.id)
+      const response = await titterService.follow(mockUserToFollowing.id)
 
       expect(localStorage.setItem).toHaveBeenNthCalledWith(4, 'user_followers', JSON.stringify(resultUserFollowers))
       expect(localStorage.setItem).toHaveBeenNthCalledWith(5, 'user_following', JSON.stringify(resultUserFollowing))
@@ -379,7 +380,7 @@ describe('titter ~ service', () => {
       localStorage.setItem('user_followers', JSON.stringify(userFollowersData))
       localStorage.setItem('user_following', JSON.stringify(resultUserFollowing))
 
-      const response = await titter.follow(mockUserToFollowing.id)
+      const response = await titterService.follow(mockUserToFollowing.id)
 
       expect(localStorage.setItem).toHaveBeenNthCalledWith(4, 'user_followers', JSON.stringify(resultUserFollowers))
       expect(localStorage.setItem).toHaveBeenNthCalledWith(5, 'user_following', JSON.stringify(resultUserFollowing))

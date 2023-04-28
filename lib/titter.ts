@@ -1,9 +1,9 @@
-import { TitterBuilder } from '../builders/titter-builder'
-import { FilterType, Profile, Titter, TitterFeed, TitterPayload, User } from '../entities'
-import { MAXIMUM_BODY_LENGTH, MAXIMUM_POSTS_PER_DAY } from '../lib/constants'
-import { formatDate } from '../lib/format-date'
+import type { FilterType, Profile, Titter, TitterFeed, TitterPayload, User } from '@/entities'
 
-import storage from './storage'
+import { TitterBuilder } from './builders/titter-builder'
+import { MAXIMUM_BODY_LENGTH, MAXIMUM_POSTS_PER_DAY } from './constants'
+import { formatDate } from './format-date'
+import { storageService } from './storage'
 
 const datesAreOnSameDay = (first: Date, second: Date) =>
   first.getFullYear() === second.getFullYear() &&
@@ -29,10 +29,10 @@ const newTitter = (payload: TitterPayload) =>
         return reject(new Error('the titter reached the maximum amount of characters.'))
       }
 
-      const loggedUser = storage.getItem<User>('current_user')
+      const loggedUser = storageService.getItem<User>('current_user')
 
       if (loggedUser?.id) {
-        const titters = storage.getItem<Titter[]>('titters') || []
+        const titters = storageService.getItem<Titter[]>('titters') || []
 
         if (titterControlValidation(titters, loggedUser.id)) {
           return reject(new Error('you exceeded the titter limit for the day.'))
@@ -54,18 +54,18 @@ const newTitter = (payload: TitterPayload) =>
           }
 
           if (titter.kind === 'quote' && payload.referencedTitter) {
-            storage.setValueToItemAtDocument('user_quote', payload?.referencedTitter?.id, loggedUser.id)
+            storageService.setValueToItemAtDocument('user_quote', payload?.referencedTitter?.id, loggedUser.id)
           }
 
           if (titter.kind === 'retitter' && payload.referencedTitter) {
-            storage.setValueToItemAtDocument('user_retitter', payload?.referencedTitter?.id, loggedUser.id)
+            storageService.setValueToItemAtDocument('user_retitter', payload?.referencedTitter?.id, loggedUser.id)
           }
         }
 
         const newTitters = [...titters, titter]
 
-        storage.setValueToItemAtDocument('user_titter', loggedUser.id, titter.id)
-        storage.setItem('titters', newTitters)
+        storageService.setValueToItemAtDocument('user_titter', loggedUser.id, titter.id)
+        storageService.setItem('titters', newTitters)
 
         return resolve(titter)
       }
@@ -75,19 +75,19 @@ const newTitter = (payload: TitterPayload) =>
 const follow = (userId: string) =>
   new Promise(resolve => {
     setTimeout(() => {
-      const loggedUser = storage.getItem<User>('current_user')
+      const loggedUser = storageService.getItem<User>('current_user')
 
-      const loggedUserFollowUserId = storage
+      const loggedUserFollowUserId = storageService
         .getValueToItemCollection('user_followers', userId)
         ?.includes(loggedUser!.id)
 
       if (loggedUserFollowUserId) {
-        storage.removeValueItemAtDocument('user_followers', userId, loggedUser!.id)
-        storage.removeValueItemAtDocument('user_following', loggedUser!.id, userId)
+        storageService.removeValueItemAtDocument('user_followers', userId, loggedUser!.id)
+        storageService.removeValueItemAtDocument('user_following', loggedUser!.id, userId)
         return resolve('unfollow')
       } else {
-        storage.setValueToItemAtDocument('user_followers', userId, loggedUser!.id)
-        storage.setValueToItemAtDocument('user_following', loggedUser!.id, userId)
+        storageService.setValueToItemAtDocument('user_followers', userId, loggedUser!.id)
+        storageService.setValueToItemAtDocument('user_following', loggedUser!.id, userId)
         return resolve('follow')
       }
     }, 200)
@@ -109,8 +109,8 @@ const titterDateFormate: Intl.DateTimeFormatOptions = {
 
 const enhancedTitter = (loggedUserId: string) => {
   return (titter: Titter) => {
-    const quoteData = storage.getDocument('user_quote', titter.id)
-    const retitterData = storage.getDocument('user_retitter', titter.id)
+    const quoteData = storageService.getDocument('user_quote', titter.id)
+    const retitterData = storageService.getDocument('user_retitter', titter.id)
 
     return {
       ...titter,
@@ -129,7 +129,7 @@ const enhancedTitter = (loggedUserId: string) => {
 }
 
 const filterByFollowing = (titters: Titter[], loggedUserId: string) => {
-  const followingData = storage.getDocument('user_following', loggedUserId)
+  const followingData = storageService.getDocument('user_following', loggedUserId)
 
   return titters.filter(titter => Boolean(followingData.data?.find(item => item === titter.user.id))).sort(sortTitter)
 }
@@ -141,8 +141,8 @@ const sortAndEnchancedTitter = (titters: Titter[], loggedUserId: string) => {
 const feed = (filter: FilterType = 'all', username?: string, searchTerm?: string) =>
   new Promise<TitterFeed[]>(resolve => {
     setTimeout(() => {
-      const titters = storage.getItem<Titter[]>('titters') || []
-      const loggedUser = storage.getItem<User>('current_user')
+      const titters = storageService.getItem<Titter[]>('titters') || []
+      const loggedUser = storageService.getItem<User>('current_user')
 
       if (loggedUser?.id) {
         if (searchTerm) {
@@ -175,10 +175,14 @@ const feed = (filter: FilterType = 'all', username?: string, searchTerm?: string
   })
 
 const getUser = (username: string) => {
-  const users = storage.getItem<Record<string, User>>('users') || {}
+  const users = storageService.getItem<Record<string, User>>('users') || {}
   const foundedUser = Object.values(users).find(user => user.username === username)
 
   return foundedUser
+}
+
+const getLoggedUser = () => {
+  return storageService.getItem<User>('current_user')
 }
 
 const getUserProfile = (username: string) =>
@@ -190,12 +194,12 @@ const getUserProfile = (username: string) =>
         return reject(new Error('user not found!'))
       }
 
-      const loggedUser = storage.getItem<User>('current_user')
+      const loggedUser = storageService.getItem<User>('current_user')
 
       if (userProfile?.id && userProfile.createdAt && loggedUser) {
-        const followersData = storage.getDocument('user_followers', userProfile.id)
-        const followingData = storage.getDocument('user_following', userProfile.id)
-        const titteringsData = storage.getDocument('user_titter', userProfile.id)
+        const followersData = storageService.getDocument('user_followers', userProfile.id)
+        const followingData = storageService.getDocument('user_following', userProfile.id)
+        const titteringsData = storageService.getDocument('user_titter', userProfile.id)
 
         const showFollowButton = loggedUser?.username !== username
         const loggedUserFollowProfile = followersData.data.includes(loggedUser.id)
@@ -217,6 +221,4 @@ const getUserProfile = (username: string) =>
     }, 1000)
   })
 
-const titter = { newTitter, feed, getUserProfile, getUser, follow }
-
-export default titter
+export const titterService = { newTitter, feed, follow, getUserProfile, getUser, getLoggedUser }

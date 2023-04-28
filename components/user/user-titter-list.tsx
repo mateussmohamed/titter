@@ -1,7 +1,8 @@
 'use client'
 
-import { TitterList } from '@/domains/feed/components/titter-list'
-import { useFeedContext } from '@/domains/feed/context/feed-context'
+import { useFeedContext } from '@/components/feed/feed-context'
+
+import { TitterList } from '../feed/titter-list'
 
 export const UserTitterList = ({ username }: { username: string }) => {
   const { loadingTitters, titters } = useFeedContext()

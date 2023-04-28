@@ -6,12 +6,11 @@ import Link from 'next/link'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { useToast } from '@/components/ui/use-toast'
-import { TitterFeed, TitterPayload } from '@/domains/platform/entities'
-import { abbreviation, cn } from '@/domains/platform/lib/utils'
-
-import { useFeedContext } from '../context/feed-context'
+import type { TitterFeed, TitterPayload } from '@/entities'
+import { abbreviation, cn } from '@/lib/utils'
 
 import { AddNewTitter } from './add-new-titter'
+import { useFeedContext } from './feed-context'
 
 import { ArrowLeftRight, MessageSquare } from 'lucide-react'
 

@@ -1,10 +1,7 @@
 'use client'
 
-// import { useFeed } from '@/domains/platform/hooks/use-feed'
-
-import { useFeedContext } from '../context/feed-context'
-
 import { AddNewTitter } from './add-new-titter'
+import { useFeedContext } from './feed-context'
 import { FeedFilter } from './feed-filter'
 import { TitterList } from './titter-list'
 

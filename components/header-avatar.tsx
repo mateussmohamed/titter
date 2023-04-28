@@ -4,16 +4,16 @@ import { useState } from 'react'
 import Link from 'next/link'
 
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
-import { User } from '@/domains/platform/entities'
-import { useEffectOnce } from '@/domains/platform/lib/hooks'
-import { abbreviation } from '@/domains/platform/lib/utils'
-import storage from '@/domains/platform/services/storage'
+import type { User } from '@/entities'
+import { titterService } from '@/lib/titter'
+import { useEffectOnce } from '@/lib/utils'
+import { abbreviation } from '@/lib/utils'
 
 export function HeaderAvatar() {
   const [user, setUser] = useState<User>()
 
   useEffectOnce(() => {
-    setUser(storage.getItem<User>('current_user'))
+    setUser(titterService.getLoggedUser())
   })
 
   return (

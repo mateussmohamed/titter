@@ -4,8 +4,8 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 import { useParams } from 'next/navigation'
 
 import { useToast } from '@/components/ui/use-toast'
-import { FilterType, TitterFeed, TitterPayload, User } from '@/domains/platform/entities'
-import titterService from '@/domains/platform/services/titter'
+import type { FilterType, TitterFeed, TitterPayload, User } from '@/entities'
+import { titterService } from '@/lib/titter'
 
 export interface FeedContextProps {
   fetchTitters: (filter: FilterType, username?: string, search?: string) => void

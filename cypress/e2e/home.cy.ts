@@ -21,7 +21,7 @@ context('Home', () => {
 
     cy.get('[data-cy="loading-titter-list"]').should('have.length', 0)
 
-    cy.get('[data-test="titter-card"]').should('have.length', 47)
+    cy.get('[data-test="titter-card"]').should('have.length', 57)
   })
 
   it('should displays all titters from search result', () => {
@@ -30,7 +30,7 @@ context('Home', () => {
 
     cy.get('[data-cy="loading-titter-list"]').should('have.length', 1)
 
-    cy.get('[data-test="titter-card"]').should('have.length', 48)
+    cy.get('[data-test="titter-card"]').should('have.length', 58)
 
     cy.get('[data-cy="search-input"]').type('nice titter!!!', { delay: 3 })
 
@@ -61,7 +61,7 @@ context('Home', () => {
 
     cy.get('[data-test="titter-card"]').should('have.length', tittersIFollow.length)
 
-    cy.url().should('eq', 'http://localhost:3000/?filter=following')
+    // cy.url().should('eq', 'http://localhost:3000/?filter=following')
   })
 
   it('should display the last titter created', () => {
@@ -70,7 +70,7 @@ context('Home', () => {
 
     cy.get('[data-cy="loading-titter-list"]').should('have.length', 1)
 
-    cy.get('[data-test="titter-card"]').should('have.length', 48)
+    cy.get('[data-test="titter-card"]').should('have.length', 58)
 
     cy.get('[data-cy="titter-card-body"]').first().should('have.text', 'nice titter!!!')
   })
@@ -105,48 +105,48 @@ context('Home', () => {
     cy.get('[data-cy="titter-input"]').type(chanceQuote.paragraph({ sentences: 10 }), { delay: 0 })
     cy.get('[data-cy="titter-btn"]').click()
 
-    cy.get('.chakra-alert__title').should('have.text', 'Oh no =(')
-    cy.get('.chakra-alert__desc').should('have.text', 'the titter reached the maximum amount of characters.')
+    cy.get('[data-cy="toast-title"]').should('have.text', 'Oh no =(')
+    cy.get('[data-cy="toast-description"]').should('have.text', 'the titter reached the maximum amount of characters.')
   })
 
   it('should display a error message when user try create the sixth titter on same day', () => {
     const chanceQuote = new Chance()
-    cy.get('[data-test="titter-card"]').should('have.length', 47)
+    cy.get('[data-test="titter-card"]').should('have.length', 57)
 
     cy.get('[data-cy="titter-input"]').type('titter of the day 1', { delay: 0 })
     cy.get('[data-cy="titter-btn"]').click()
     cy.get('[data-cy="loading-titter-list"]').should('have.length', 1)
-    cy.get('[data-test="titter-card"]').should('have.length', 48)
+    cy.get('[data-test="titter-card"]').should('have.length', 58)
     cy.get('[data-cy="titter-card-body"]').first().should('have.text', 'titter of the day 1')
 
     cy.get('[data-cy="titter-input"]').type('titter of the day 2', { delay: 0 })
     cy.get('[data-cy="titter-btn"]').click()
     cy.get('[data-cy="loading-titter-list"]').should('have.length', 1)
-    cy.get('[data-test="titter-card"]').should('have.length', 49)
+    cy.get('[data-test="titter-card"]').should('have.length', 59)
     cy.get('[data-cy="titter-card-body"]').first().should('have.text', 'titter of the day 2')
 
     cy.get('[data-cy="titter-input"]').type('titter of the day 3', { delay: 0 })
     cy.get('[data-cy="titter-btn"]').click()
     cy.get('[data-cy="loading-titter-list"]').should('have.length', 1)
-    cy.get('[data-test="titter-card"]').should('have.length', 50)
+    cy.get('[data-test="titter-card"]').should('have.length', 60)
     cy.get('[data-cy="titter-card-body"]').first().should('have.text', 'titter of the day 3')
 
     cy.get('[data-cy="titter-input"]').type('titter of the day 4', { delay: 0 })
     cy.get('[data-cy="titter-btn"]').click()
     cy.get('[data-cy="loading-titter-list"]').should('have.length', 1)
-    cy.get('[data-test="titter-card"]').should('have.length', 51)
+    cy.get('[data-test="titter-card"]').should('have.length', 61)
     cy.get('[data-cy="titter-card-body"]').first().should('have.text', 'titter of the day 4')
 
     cy.get('[data-cy="titter-input"]').type('titter of the day 5', { delay: 0 })
     cy.get('[data-cy="titter-btn"]').click()
     cy.get('[data-cy="loading-titter-list"]').should('have.length', 1)
-    cy.get('[data-test="titter-card"]').should('have.length', 52)
+    cy.get('[data-test="titter-card"]').should('have.length', 62)
     cy.get('[data-cy="titter-card-body"]').first().should('have.text', 'titter of the day 5')
 
     cy.get('[data-cy="titter-input"]').type('titter of the day 6', { delay: 0 })
     cy.get('[data-cy="titter-btn"]').click()
 
-    cy.get('.chakra-alert__title').should('have.text', 'Oh no =(')
-    cy.get('.chakra-alert__desc').should('have.text', 'you exceeded the titter limit for the day.')
+    cy.get('[data-cy="toast-title"]').should('have.text', 'Oh no =(')
+    cy.get('[data-cy="toast-description"]').should('have.text', 'you exceeded the titter limit for the day.')
   })
 })

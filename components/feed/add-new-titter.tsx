@@ -5,11 +5,11 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { useToast } from '@/components/ui/use-toast'
-import { TitterPayload } from '@/domains/platform/entities'
-import { MAXIMUM_BODY_LENGTH } from '@/domains/platform/lib/constants'
-import { cn } from '@/domains/platform/lib/utils'
+import type { TitterPayload } from '@/entities'
+import { MAXIMUM_BODY_LENGTH } from '@/lib/constants'
+import { cn } from '@/lib/utils'
 
-import { useFeedContext } from '../context/feed-context'
+import { useFeedContext } from './feed-context'
 
 import { Loader2 } from 'lucide-react'
 

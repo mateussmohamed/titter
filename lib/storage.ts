@@ -144,7 +144,7 @@ const getDocument = (key: StorageKyes, nodeKey: string) => {
   return { count: data?.length, data }
 }
 
-const storage = {
+export const storageService = {
   getItem,
   setItem,
   existItem,
@@ -155,5 +155,3 @@ const storage = {
   getValueToItemCollection,
   removeValueItemAtDocument
 }
-
-export default storage

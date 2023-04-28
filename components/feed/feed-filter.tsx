@@ -5,9 +5,9 @@ import { useCallback, useContext, useState } from 'react'
 import { Input } from '@/components/ui/input'
 import { Separator } from '@/components/ui/separator'
 import { Switch } from '@/components/ui/switch'
-import type { FilterType } from '@/domains/platform/entities'
+import type { FilterType } from '@/entities'
 
-import { FeedContext } from '../context/feed-context'
+import { FeedContext } from './feed-context'
 
 import debounce from 'lodash.debounce'
 import { Search } from 'lucide-react'

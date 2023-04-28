@@ -3,7 +3,7 @@
 import { Fragment, useMemo } from 'react'
 
 import { Separator } from '@/components/ui/separator'
-import { TitterFeed } from '@/domains/platform/entities'
+import type { TitterFeed } from '@/entities'
 
 import { TitterCard } from './titter-card'
 import { TitterListSkeleton } from './titter-list-skeleton'

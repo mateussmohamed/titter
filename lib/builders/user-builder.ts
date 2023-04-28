@@ -1,4 +1,4 @@
-import { formatDate } from '../lib/format-date'
+import { formatDate } from '../format-date'
 
 import { getDate } from './get-date'
 
