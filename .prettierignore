@@ -1,0 +1,7 @@
+
+**/.git
+**/.coverage
+**/.swc
+**/.vscode
+**/.next
+**/node_modules

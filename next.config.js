@@ -1,9 +1,12 @@
 /** @type {import('next').NextConfig} */
-
 const nextConfig = {
-  reactStrictMode: false,
-  compiler: {
-    emotion: true
+  reactStrictMode: true,
+  swcMinify: true,
+  experimental: {
+    appDir: true
+  },
+  images: {
+    domains: ['avatars.githubusercontent.com']
   }
 }
 
