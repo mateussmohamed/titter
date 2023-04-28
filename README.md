@@ -50,14 +50,15 @@ SSH URLs provide access to a Git repository via SSH, a secure protocol. If you h
 
 **Answer:**
 
-- [Next.js](https://nextjs.org)
+- [Next.js](https://nextjs.org) App dir + Intercepting Routes
 - [Typescript](https://www.typescriptlang.org)
-- [Chakra-UI](https://chakra-ui.com)
+- [Tailwind](https://tailwindcss.com)
+- [Shadcn's UI](https://ui.shadcn.com)
 - [Jest](https://jestjs.io)
 - [Cypress](https://www.cypress.io)
 - [testing-library](https://testing-library.com)
 - [Chance](https://chancejs.com) to create fake date
-- [react-unicons](https://github.com/Iconscout/react-unicons)
+- [Lucide icons](https://lucide.dev)
 
 # :bug: Issues
 
